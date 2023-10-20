@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Primer Parcial</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap 4 -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .container {
+      background-color: #6d6d6d;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    h2 {
+      background-color: #d50c0c;
+      color: #fff;
+      padding: 10px;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+
+    .btn {
+      margin-right: 10px;
+    }
+
+    table {
+      width: 100%;
+    }
+
+    table thead {
+      background-color: #d50c0c;
+    }
+
+    table th {
+      color: #fff;
+    }
+
+    table tbody tr:nth-child(odd) {
+      background-color: #000;
+    }
+
+    table tbody td {
+      padding: 8px;
+      color: #fff;
+    }
+
+    table img {
+      max-width: 50px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      background-color: #e5e5e5;
+    }
+
+    .btn-success {
+      background-color: #09e52e;
+      border-color: #09e52e;
+    }
+
+    .btn-info {
+      background-color: #00d9ff;
+      border-color: #00d9ff;
+    }
+
+    .btn-light {
+      background-color: #ff8800;
+      border-color: #ff8800;
+      color: #000;
+    }
+
+    .btn-primary {
+      background-color: #d50c7a;
+      border-color: #d50c7a;
+    }
+
+    .btn-danger {
+      background-color: #2600ff;
+      border-color: #2600ff;
+    }
+
+    .btn-dark {
+      background-color: #ffee00;
+      border-color: #ffee00;
+    }
+  </style>
+
+  <!-- AGREGAR ARCHIVOS JS AQUI -->
+  <script src="./FRONTEND/manejadora.js"></script>
+  <script src="./FRONTEND/auto.js"></script>
+  <script src="./FRONTEND/autoBD.js"></script>
+</head>
+
+<body>
+  <br>
+  <div class="container">
+    <br>
+    <h2>Nahuel Rodrigo Pazos</h2>
+
+    <h4>ABM - Autos (JSON - BD sin foto) </h4>
+
+    <table class="table table" style="width:95%">
+      <tr>
+        <td style="width:50%">
+          <table class="table table-bordered table-hover">
+            <tr>
+              <td><label class="col control-label">ID</label></td>
+              <td><input type="text" id="idAuto" readonly /></td>
+            </tr>
+            <tr>
+              <td><label class="col control-label">Marca</label></td>
+              <td><input type="text" id="marca" /></td>
+            </tr>
+            <tr>
+              <td><label class="col control-label">Patente</label></td>
+              <td><input type="text" id="patente" /></td>
+            </tr>
+            <tr>
+              <td><label class="col control-label">Color</label></td>
+              <td><input type="text" id="color" /></td>
+            </tr>
+            <tr>
+              <td><label class="col control-label">Precio</label></td>
+              <td><input type="number" id="precio"></td>
+            </tr>
+            <tr>
+              <td colspan="2" class="col">
+                <input type="button" value="Agregar JSON" id="btn-agregar" class="btn btn-success"
+                  onclick="PrimerParcial.Manejadora.AgregarAutoJSON()" />
+                <input type="button" value="Mostrar JSON" class="btn btn-info"
+                  onclick="PrimerParcial.Manejadora.MostrarAutoJSON()" />
+                <input type="button" value="Verificar JSON" class="btn btn-light"
+                  onclick="PrimerParcial.Manejadora.VerificarAutoJSON()" />
+                <input type="button" value="Agregar sin foto" class="btn btn-primary"
+                  onclick="PrimerParcial.Manejadora.AgregarAutoSinFoto()" />
+                <input type="button" value="Mostrar BD" class="btn btn-danger"
+                  onclick="PrimerParcial.Manejadora.MostrarAutoBD(1)" />
+                <input type="button" value="Modificar sin foto" class="btn btn-dark"
+                  onclick="PrimerParcial.Manejadora.ModificarAutoBDSinFoto()" />
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <div class="">
+            <div id="divInfo"></div>
+            <div id="divTabla">
+              tabla aquí...
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <input type="hidden" id="hdnIdModificacion">
+  </div>
+</body>
+
+</html>

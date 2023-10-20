@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Primer Parcial</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script src="./FRONTEND/manejadora.js"></script>
+  <script src="./FRONTEND/auto.js"></script>
+  <script src="./FRONTEND/autoBD.js"></script>
+  <style>
+    body {
+      background-color: rgb(255, 255, 255);
+      color: white;
+    }
+    h2, h4 {
+      background-color: red;
+      color: white;
+      padding: 10px;
+    }
+    table {
+      background-color: gray;
+      color: white;
+    }
+    .table th, .table td {
+      background-color: gray;
+      color: white;
+    }
+    .btn-success {
+      background-color: green;
+      border-color: green;
+    }
+    .btn-info {
+      background-color: blue;
+      border-color: blue;
+    }
+    .btn-light {
+      background-color: yellow;
+      border-color: yellow;
+    }
+  </style>
+</head>
+<body>
+  <br>
+  <div class="container" style="background-color: rgb(0, 0, 0);">
+    <br>
+    <h2 style="background-color: red; color: white;">Nahuel Rodrigo Pazos</h2>
+    <h4>ABM - Autos BD</h4>
+    <table class="table table" style="width:95%">
+      <tr>
+        <td style="width:50%">
+          <table class="table table-bordered table-hover">
+            <tr>
+              <td><label class="col control-label">Id</label></td>
+              <td><input type="text" id="idAuto" readonly/></td>
+            </tr>
+            <tr>
+              <td><label class="col control-label">Marca</label></td>
+              <td><input type="text" id="marca" /></td>
+            </tr>
+            <tr>
+              <td><label class="col control-label">Patente</label></td>
+              <td><input type="text" id="patente" /></td>
+            </tr>
+            <tr>
+              <td><label class="col control-label">Color</label></td>
+              <td><input type="text" id="color" /></td>
+            </tr>
+            <tr>
+              <td><label class="col control-label">Precio</label></td>
+              <td><input type="number" id="precio" /></td>
+            </tr>
+            <tr>
+              <td><label class="col control-label">Foto</label></td>
+              <td><input type="file" id="foto" name="foto" ></td>
+            </tr>
+            <tr>
+              <td colspan="2" style="text-align:center">
+                <div style="height:100px"><img id="imgFoto" src="./auto_default.jfif" height="100px" width="300px" /></div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" class="col">
+                <input type="button" value="Verificar BD" id="btn-agregar" class="btn btn-success" onclick="PrimerParcial.Manejadora.VerificarAutoBD()" />
+                <input type="button" value="Verificar y agregar con foto" class="btn btn-info" onclick="PrimerParcial.Manejadora.AgregarAutoBDFoto()" />
+                <input type="button" value="Modificar" class="btn btn-light" onclick="PrimerParcial.Manejadora.ModificarAutoBDFoto()" />
+              </td>
+            </table>
+          </td>
+          <td>
+            <div class="background-container" style="background-color: lavenderblush;">
+              <div id="divInfo"></div>
+              <div id="divTabla">
+                <!-- Aquí va el contenido de la tabla -->
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <input type="hidden" id="hdnIdModificacion"><!-- PARA MODIFICAR -->
+      <!-- <div id="divSpinner" style="display:none;position:absolute"><img id="imgSpinner" src="./BACKEND/gif-load.gif" /></div>PARA EL SPINNER -->
+    </div>
+  </body>
+</html>
