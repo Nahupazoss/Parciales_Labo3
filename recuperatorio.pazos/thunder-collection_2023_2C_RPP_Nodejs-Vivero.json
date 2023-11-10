@@ -1,0 +1,152 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "2023_2C_RPP_Nodejs-Vivero",
+    "dateExported": "2023-11-09T20:32:28.906Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "72d95779-4ba8-4956-80f3-a2bf6471ac53",
+            "colId": "68f1a85d-4874-414e-8dcd-dc897675369a",
+            "containerId": "",
+            "name": "1 - ListarPlantasFotos",
+            "url": "http://localhost:2023/listarPlantasFotosBD",
+            "method": "GET",
+            "sortNum": 150000,
+            "created": "2023-11-08T21:48:47.500Z",
+            "modified": "2023-11-08T22:08:35.714Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "2cdf4a98-3b1e-42da-af92-6539a438c408",
+            "colId": "68f1a85d-4874-414e-8dcd-dc897675369a",
+            "containerId": "",
+            "name": "2 - AgregarPlantaFotoBD",
+            "url": "http://localhost:2023/agregarPlantaFotoBD",
+            "method": "POST",
+            "sortNum": 155000,
+            "created": "2023-11-08T21:48:47.501Z",
+            "modified": "2023-11-08T22:19:09.667Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "codigo",
+                        "value": "azu002"
+                    },
+                    {
+                        "name": "nombre",
+                        "value": "azucena"
+                    },
+                    {
+                        "name": "color_flor",
+                        "value": "#0af066"
+                    },
+                    {
+                        "name": "precio",
+                        "value": "2500"
+                    }
+                ],
+                "files": [
+                    {
+                        "name": "foto",
+                        "value": "c:\\Users\\DIYE\\Pictures\\flor.jpg"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "6c75334a-2d8e-4d4a-b2bc-e436530422d6",
+            "colId": "68f1a85d-4874-414e-8dcd-dc897675369a",
+            "containerId": "",
+            "name": "3 - ModificarPlantaFotoBD",
+            "url": "http://localhost:2023/modificarPlantaFotoBD",
+            "method": "POST",
+            "sortNum": 160000,
+            "created": "2023-11-08T21:48:47.502Z",
+            "modified": "2023-11-08T22:19:34.736Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "planta_json",
+                        "value": "{ \"codigo\": \"azu002\", \"nombre\": \"planta_modif\", \"color_flor\": \"#ff00ff\", \"precio\": 91218 }"
+                    }
+                ],
+                "files": [
+                    {
+                        "name": "foto",
+                        "value": "c:\\Users\\DIYE\\Pictures\\flores.jpg"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "00eaad7e-f6d5-4532-9dde-fb02e145d802",
+            "colId": "68f1a85d-4874-414e-8dcd-dc897675369a",
+            "containerId": "",
+            "name": "4 - EliminarPlantaFotoBD",
+            "url": "http://localhost:2023/eliminarPlantaFotoBD",
+            "method": "POST",
+            "sortNum": 170000,
+            "created": "2023-11-08T21:48:47.503Z",
+            "modified": "2023-11-08T22:19:53.986Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"codigo\" : \"azu002\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "e47f4af8-c4e7-4f80-bb8e-7dca2e62b617",
+            "colId": "68f1a85d-4874-414e-8dcd-dc897675369a",
+            "containerId": "",
+            "name": "5 - MostrarPlantasFiltradasFotosBD",
+            "url": "http://localhost:2023/listarPlantasFiltradasFotosBD/?planta_json={}",
+            "method": "GET",
+            "sortNum": 180000,
+            "created": "2023-11-09T16:14:24.628Z",
+            "modified": "2023-11-09T17:48:39.180Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "planta_json",
+                    "value": "{}",
+                    "isPath": false
+                },
+                {
+                    "name": "planta_json",
+                    "value": "{\"codigo\":\"pot_001\"}",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "planta_json",
+                    "value": "{\"nombre\":\"margarita\"}",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "planta_json",
+                    "value": "{\"codigo\":\"pot_001\", \"nombre\":\"potus\",\"precio\":1500}",
+                    "isDisabled": true,
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        }
+    ]
+}

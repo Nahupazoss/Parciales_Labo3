@@ -1,0 +1,185 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "2023_1C_RPP_Nodejs",
+    "dateExported": "2023-06-08T18:47:14.172Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "da15b755-972b-40c6-8529-0ebcd556eb47",
+            "colId": "c2864f41-af85-4348-9203-6bad86773168",
+            "containerId": "",
+            "name": "1 - AgregarAutoBD",
+            "url": "http://localhost:2023/agregarAutoBD",
+            "method": "POST",
+            "sortNum": 90000,
+            "created": "2023-06-07T18:46:12.539Z",
+            "modified": "2023-06-07T19:10:50.552Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"patente\":\"abc321\",\n  \"marca\":\"renault\",\n  \"color\":\"#ff00aa\",\n  \"precio\":150999\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "af3714f9-acb1-40ea-aff1-ba84d3701746",
+            "colId": "c2864f41-af85-4348-9203-6bad86773168",
+            "containerId": "",
+            "name": "2 - MostrarAutosBD",
+            "url": "http://localhost:2023/listarAutosBD",
+            "method": "GET",
+            "sortNum": 100000,
+            "created": "2023-06-07T18:46:12.540Z",
+            "modified": "2023-06-07T18:57:54.538Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "28e333a7-64e1-4057-bc3c-0386bd077be7",
+            "colId": "c2864f41-af85-4348-9203-6bad86773168",
+            "containerId": "",
+            "name": "3 - ModificarAutoBD",
+            "url": "http://localhost:2023/modificarAutoBD",
+            "method": "POST",
+            "sortNum": 120000,
+            "created": "2023-06-07T18:46:12.541Z",
+            "modified": "2023-06-07T19:04:48.697Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "  {\n    \"patente\": \"abc321\",\n    \"marca\": \"ford_modif\",\n    \"color\": \"#ff00bb\",\n    \"precio\": 120918\n  }",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "f9ee5bcd-c0ff-429c-bfe0-4b439e2c2203",
+            "colId": "c2864f41-af85-4348-9203-6bad86773168",
+            "containerId": "",
+            "name": "4 - EliminarAutoBD",
+            "url": "http://localhost:2023/EliminarAutoBD",
+            "method": "POST",
+            "sortNum": 130000,
+            "created": "2023-06-07T18:46:12.542Z",
+            "modified": "2023-06-07T19:05:55.670Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"patente\" : \"abc321\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "49e5d216-0624-4b8e-925e-9c7a7b0aa270",
+            "colId": "c2864f41-af85-4348-9203-6bad86773168",
+            "containerId": "",
+            "name": "5 - ListarAutosFotos",
+            "url": "http://localhost:2023/listarAutoFotosBD",
+            "method": "GET",
+            "sortNum": 150000,
+            "created": "2023-06-07T18:46:12.543Z",
+            "modified": "2023-06-07T18:46:12.543Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "e3dbf75e-363b-4f61-8361-b2c1154d518f",
+            "colId": "c2864f41-af85-4348-9203-6bad86773168",
+            "containerId": "",
+            "name": "6 - AgregarAutoFotoBD",
+            "url": "http://localhost:2023/agregarAutoFotoBD",
+            "method": "POST",
+            "sortNum": 155000,
+            "created": "2023-06-07T18:46:12.544Z",
+            "modified": "2023-06-07T19:07:17.191Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "patente",
+                        "value": "cqc912"
+                    },
+                    {
+                        "name": "marca",
+                        "value": "fiat"
+                    },
+                    {
+                        "name": "color",
+                        "value": "#0af066"
+                    },
+                    {
+                        "name": "precio",
+                        "value": "250000"
+                    }
+                ],
+                "files": [
+                    {
+                        "name": "foto",
+                        "value": "c:\\Users\\DIYE\\Pictures\\b.jpg"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "ca492fa8-091e-4ebb-a12d-ab021687e179",
+            "colId": "c2864f41-af85-4348-9203-6bad86773168",
+            "containerId": "",
+            "name": "7 - ModificarAutoFotoBD",
+            "url": "http://localhost:2023/modificarAutoFotoBD",
+            "method": "POST",
+            "sortNum": 160000,
+            "created": "2023-06-07T18:46:12.545Z",
+            "modified": "2023-06-07T19:08:37.815Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "autoFoto_json",
+                        "value": "{ \"patente\": \"cqc912\", \"marca\": \"fiat_modif\", \"color\": \"#ff00ff\", \"precio\": 91218 }"
+                    }
+                ],
+                "files": [
+                    {
+                        "name": "foto",
+                        "value": "c:\\Users\\DIYE\\Pictures\\auto_uno.jfif"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "3c81d2be-cbfd-476a-b7c0-4b0280886de9",
+            "colId": "c2864f41-af85-4348-9203-6bad86773168",
+            "containerId": "",
+            "name": "8 - EliminarAutoFotoBD",
+            "url": "http://localhost:2023/eliminarAutoFotoBD",
+            "method": "POST",
+            "sortNum": 170000,
+            "created": "2023-06-07T18:46:12.546Z",
+            "modified": "2023-06-07T19:09:22.689Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"patente\" : \"cqc912\"\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ]
+}
