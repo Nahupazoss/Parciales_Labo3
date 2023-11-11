@@ -20,5 +20,5 @@ NO MODIFICA.
 
 en un futuro lo arreglo :s
 
-# Primer Parcial Recuperatorio
+# Primer Parcial Recuperatorio (aprobado con promocion)
 Parte BackEnd Node.js dada por el profesor , conectado x ajax parte front con back
