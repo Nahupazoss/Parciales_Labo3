@@ -165,9 +165,66 @@ namespace RecPrimerParcial
             else
             {
                 alert("Cargue TODOS los datos");
-            }
-            
+            }    
         }
+
+        /*public static FiltrarPlantasFotoBD()
+        {
+            let ajax = new Ajax();
+
+            ajax.Get("http://localhost:2023/listarPlantasFiltradasFotosBD", (resultado:string)=>
+            {
+                let div = (<HTMLInputElement>document.getElementById("divTablaPlantaFotos"));
+
+                let nombre : string = ((<HTMLInputElement> document.getElementById("nombre")).value);
+                //div.textContent = "";
+                console.clear();
+                console.log(resultado);
+
+                let plantas = JSON.parse(resultado);
+
+                if(plantas !== null)
+                {
+                    let tabla = "<table><thead><tr><th>Codigo</th><th>Nombre</th><th>Color</th><th>Precio</th><th>Foto</th><th>Acciones</th></tr></thead><tbody>";
+
+                    for(let planta of plantas)
+                    {
+                        if(nombre == plantas.nombre)
+                        {
+                            tabla += '<tr><td>' + planta.codigo + '</td><td>' + planta.nombre + '</td><td>' + `<input = type="color" value=${planta.color_flor} disabled></input>`;
+                            tabla += '</td><td>' + planta.precio + '</td><td>' + `<img src="http://localhost:2023/${planta.foto}" width="50px" hight="50px">` + '</td>';  
+                            tabla += `<td><input type="button" value="Modificar" class="btn btn-info id="" data-obj=${JSON.stringify(planta)} name="btnModificar"><span class="bi bi-pencil"></span></input></td>`;
+                            tabla += `<td><input type="button" value="Eliminar" class="btn btn-danger id="" data-obj='${JSON.stringify(planta)}' name="btnEliminar"><span class="bi bi-x-circle"></span></input></td></tr>`;  
+                        }
+                        else
+                        {
+                            alert("Ha ocurrido un ERROdadaR!!!....");
+                        }        
+                    }
+
+                    tabla += "</tbody></table>";
+                    div.innerHTML = tabla;
+
+                    document.getElementsByName("btnModificar").forEach((boton)=>
+                    {
+                        boton.addEventListener("click", ()=>
+                        {
+                            let obj : any = boton.getAttribute("data-obj");
+                            new Manejadora().ModificarPlantaFotoBD(obj);
+                        });
+                    });
+
+                    document.getElementsByName("btnEliminar").forEach((boton)=>
+                    {
+                        boton.addEventListener("click", ()=>
+                        {
+                            let obj : any = boton.getAttribute("data-obj");
+                            new Manejadora().EliminarPlantaFotoBD(obj);
+                        });
+                    });
+                }
+            });
+        }*/
 
 
         private static Fail(retorno:string):void 

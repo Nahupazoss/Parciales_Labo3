@@ -14,7 +14,7 @@ namespace Pazos
             this.nombre = nombre;
             this.color_flor = color_flor;
             this.precio = precio;
-            this.foto = foto;
+            this.foto = foto === undefined ? '""' : foto; 
         }
 
         public ToJSON() : string

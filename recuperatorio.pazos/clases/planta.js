@@ -7,7 +7,7 @@ var Pazos;
             this.nombre = nombre;
             this.color_flor = color_flor;
             this.precio = precio;
-            this.foto = foto;
+            this.foto = foto === undefined ? '""' : foto;
         }
         ToJSON() {
             return `{"codigo":"${this.codigo}","nombre":"${this.nombre}","color_flor":"${this.color_flor}","precio":${this.precio},"foto":${this.foto}}`;
