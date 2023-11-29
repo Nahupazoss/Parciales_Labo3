@@ -21,4 +21,8 @@ NO MODIFICA.
 en un futuro lo arreglo :s
 
 # Primer Parcial Recuperatorio
-Parte BackEnd Node.js dada por el profesor , conectado x ajax parte front con back
+Parte BackEnd Node.js dada por el profesor , conectado x ajax parte front con back(aprobado con 6)
+
+# Segundo Parcial Recuperatorio
+Parte BackEnd Node.js hecha de 0 y parte de conexion a front end hecha de 0(aprobado con 9)
+
