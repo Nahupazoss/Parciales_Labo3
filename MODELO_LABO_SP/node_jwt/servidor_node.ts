@@ -3,7 +3,7 @@ const express = require('express');
 
 const app = express();
 
-app.set('puerto', 2022);
+app.set('puerto', 9876);
 
 //RUTA DE PRUEBA DEL SERVIDOR
 app.get('/', (request:any, response:any) => {
@@ -35,7 +35,7 @@ const mime = require('mime-types');
 //AGREGO STORAGE
 const storage = multer.diskStorage({
 
-    destination: "public/juguetes/fotos/",
+    destination: "public/fotos/",
 });
 
 const upload = multer({
@@ -60,7 +60,7 @@ const db_options = {
     port: 3306,
     user: 'root',
     password: '',
-    database: 'jugueteria_bd'
+    database: 'productos_usuarios_node'
 };
 
 //AGREGO MW MYSQL A NIVEL DE APLICACIÓN
@@ -83,7 +83,7 @@ verificar_jwt.use((request:any, response:any, next:any) => {
     let token = request.headers["authorization"];
     
     if (! token) {
-        response.status(403).send({
+        response.status(401).send({
             error: "El JWT es requerido!!!"
         });
         return;
@@ -113,7 +113,7 @@ verificar_jwt.use((request:any, response:any, next:any) => {
         });
     }
     else{
-        response.status(403).send({
+        response.status(401).send({
             error: "El JWT está vacío!!!"
         });
     }
@@ -121,24 +121,24 @@ verificar_jwt.use((request:any, response:any, next:any) => {
 
 //#endregion
 
-//#region MW solo_propietario
+//#region MW solo_admin
 
 //SE GENERA RUTA PARA EL MW
-const solo_propietario = express.Router();
+const solo_admin = express.Router();
 
-solo_propietario.use(verificar_jwt, (request:any, response:any, next:any) => {
+solo_admin.use(verificar_jwt, (request:any, response:any, next:any) => {
 
     //SE RECUPERA EL PAYLOAD DEL JWT DEL OBJETO DE LA RESPUESTA
     let usuario = response.jwt;
 
-    if(usuario.perfil == "propietario"){
+    if(usuario.perfil == "administrador"){
         //SE INVOCA AL PRÓXIMO CALLEABLE
          next();
     }
     else
     {
         return response.json({
-            mensaje:"NO tiene perfil de 'PROPIETARIO'"
+            mensaje:"NO tiene perfil de 'ADMINISTRADOR'"
         });
     }
 }/*, function (request:any, response:any, next:any) {
@@ -154,6 +154,43 @@ solo_propietario.use(verificar_jwt, (request:any, response:any, next:any) => {
 
 //#region Test JWT
 
+//#01
+app.post("/crear_token", (request:any, response:any)=>{
+
+    let obj_user = request.body;
+
+    if((obj_user.usuario == "admin" || obj_user.usuario == "user") && obj_user.clave == "123456")
+    {
+        //SE CREA EL PAYLOAD CON LOS ATRIBUTOS QUE SE NECESITAN
+        //https://www.npmjs.com/package/jsonwebtoken
+        const payload = { 
+            usuario: obj_user.usuario,
+            perfil: obj_user.usuario == "admin" ? "administrador" : "usuario",
+            fecha: new Date(2023,9,12,14,17,0),
+        };
+
+        //SE FIRMA EL TOKEN CON EL PAYLOAD Y LA CLAVE SECRETA
+        const token = jwt.sign(payload, app.get("key_jwt"), {
+            expiresIn : "1m"
+            //exp: Math.floor(Date.now() / 1000) + 60
+        });
+
+        response.json({
+            exito: true,
+            mensaje : "JWT creado",
+            jwt : token
+        });
+    }
+    else
+    {
+        response.json({
+            exito: false,
+            mensaje : "Usuario no registrado!!!",
+            jwt : null
+        });
+    }
+});
+
 //#02
 app.get('/verificar_token', verificar_jwt, (request:any, response:any)=>{
     
@@ -162,9 +199,9 @@ app.get('/verificar_token', verificar_jwt, (request:any, response:any)=>{
 });
 
 //#03
-app.get('/propietario', solo_propietario, (request:any, response:any)=>{
+app.get('/admin', solo_admin, (request:any, response:any)=>{
     
-    console.log("En el verbo GET/propietario");
+    console.log("En el verbo GET/admin");
     response.json(response.jwt);
 });
 
@@ -186,7 +223,7 @@ verificar_usuario.use((request:any, response:any, next:any) => {
 
         if(err) throw("Error al conectarse a la base de datos.");
 
-        conn.query("select * from usuarios where correo = ? and clave = ? ", [obj.correo, obj.clave], (err:any, rows:any)=>{
+        conn.query("select * from usuarios where legajo = ? and apellido = ? ", [obj.legajo, obj.apellido], (err:any, rows:any)=>{
 
             if(err) throw("Error en consulta de base de datos.");
 
@@ -199,7 +236,7 @@ verificar_usuario.use((request:any, response:any, next:any) => {
             else{
                 response.status(200).json({
                     exito : false,
-                    mensaje : "clave y/o correo incorrectos.",
+                    mensaje : "Apellido y/o Legajo incorrectos.",
                     jwt : null
                 });
             }
@@ -210,25 +247,46 @@ verificar_usuario.use((request:any, response:any, next:any) => {
 
 //#endregion
 
+//#region agregar - con verif
+
+const agregar = express.Router();
+
+agregar.use(verificar_jwt, (request:any, response:any, next:any) => {
+
+    //SE RECUPERA EL PAYLOAD DEL JWT DEL OBJETO DE LA RESPUESTA
+    let obj = response.jwt;
+
+    if(obj.usuario.Rol == "administrador"){
+        //SE INVOCA AL PRÓXIMO CALLEABLE
+         next();
+    }
+    else{
+        return response.status(401).json({
+            mensaje:"NO tiene el rol necesario para realizar la acción."
+        });
+    }
+});
+
+//#endregion
+
 //#region modificar_eliminar - con verif
 
 const modificar_eliminar = express.Router();
 
 modificar_eliminar.use(verificar_jwt, (request:any, response:any, next:any)=>{
 
-  console.log("middleware modificar");
+    //SE RECUPERA EL USUARIO DEL PAYLOAD DEL JWT DEL OBJETO DE LA RESPUESTA
+    let obj = response.jwt.usuario;
 
-  //SE RECUPERA EL TOKEN DEL OBJETO DE LA RESPUESTA
-  let obj = response.jwt;
-
-  if (obj.usuario.perfil == "propietario" || obj.usuario.perfil == "supervisor") {
-    //SE INVOCA AL PRÓXIMO CALLEABLE
-    next();
-  } else {
-    return response.status(401).json({
-      mensaje: "NO tiene el perfil necesario para realizar la acción.",
-    });
-  }
+    if(obj.Rol == "administrador" || obj.Rol == "supervisor"){
+        //SE INVOCA AL PRÓXIMO CALLEABLE
+        next();
+    }
+    else{
+        return response.status(401).json({
+            mensaje:"NO tiene el rol necesario para realizar la acción."
+        });
+    }   
 });
 
 //#endregion
@@ -238,45 +296,7 @@ modificar_eliminar.use(verificar_jwt, (request:any, response:any, next:any)=>{
 //##############################################################################################//
 
 //#region login
-app.get("/login", verificar_jwt,(request: any, response: any) => {
-    response.json({exito:true, payload: response.jwt});
-    let obj_respuesta = {
-      exito: false,
-      mensaje: "El JWT es requerido!!!",
-      payload: null,
-      status: 403,
-    };
-  
-    //SE RECUPERA EL TOKEN DEL ENCABEZADO DE LA PETICIÓN
-    let token = request.headers["x-access-token"] || request.headers["authorization"];
-  
-    if (!token) {
-      response.status(obj_respuesta.status).json({
-        obj_respuesta,
-      });
-    }
-  
-    if (token.startsWith("Bearer ")) {
-      token = token.slice(7, token.length);
-    }
-  
-    if (token) {
-      //SE VERIFICA EL TOKEN CON LA CLAVE SECRETA
-      jwt.verify(token, app.get("key"), (error: any, decoded: any) => {
-        if (error) {
-          obj_respuesta.mensaje = "El JWT NO es válido!!!";
-          response.status(obj_respuesta.status).json(obj_respuesta);
-        } else {
-          obj_respuesta.exito = true;
-          obj_respuesta.mensaje = "El JWT es valido";
-          obj_respuesta.payload = decoded;
-          obj_respuesta.status = 200;
-          response.status(obj_respuesta.status).json(obj_respuesta);
-        }
-      });
-    }
-  });
-  
+
 app.post("/login", verificar_usuario, (request:any, response:any, obj:any) => {
 
     //SE RECUPERA EL USUARIO DEL OBJETO DE LA RESPUESTA
@@ -285,25 +305,18 @@ app.post("/login", verificar_usuario, (request:any, response:any, obj:any) => {
     //SE CREA EL PAYLOAD CON LOS ATRIBUTOS QUE SE NECESITAN
     const payload = { 
         usuario: {
-            Id: user.id,
-            Correo: user.correo,
-            Nombre: user.nombre,
-            Apellido: user.apellido,
-            Foto: user.foto,
-            Perfil : user.perfil
+            Id : user.id,
+            Apellido : user.apellido,
+            Nombre : user.nombre,
+            Rol : user.rol
         },
-
-        alumno: {
-            Nombre: "Pazos",
-            Apellido: "Nahuel"
-        },
-
-        parcial : "Segundo Parcial 2022",
+        api : "productos_usuarios API",
+        version : "1.0.1"
     };
 
     //SE FIRMA EL TOKEN CON EL PAYLOAD Y LA CLAVE SECRETA
     const token = jwt.sign(payload, app.get("key_jwt"), {
-        expiresIn : "2m"
+        expiresIn : "5m"
     });
 
     response.json({
@@ -311,6 +324,7 @@ app.post("/login", verificar_usuario, (request:any, response:any, obj:any) => {
         mensaje : "JWT creado!!!",
         jwt : token
     });
+
 });
 
 //#endregion
@@ -319,35 +333,15 @@ app.post("/login", verificar_usuario, (request:any, response:any, obj:any) => {
 //RUTAS PARA EL CRUD - CON BD -
 //##############################################################################################//
 
-//#region LISTAR USUARIOS
+//#region LISTAR
 
-app.get('/listarUsuariosBD', verificar_jwt, (request:any, response:any)=>{
-
-    request.getConnection((err:any, conn:any)=>{
-
-        if(err) throw("Error al conectarse a la base de datos.");
-
-        conn.query("select * from usuarios", (err:any, rows:any)=>{
-
-            if(err) throw("Error en consulta de base de datos.");
-
-            response.send(JSON.stringify(rows));
-        });
-    });
-
-});
-
-//#endregion
-
-//#region LISTAR JUGUETES
-
-app.get('/listarJuguetesBD', verificar_jwt, (request:any, response:any)=>{
+app.get('/productos_bd', verificar_jwt, (request:any, response:any)=>{
 
     request.getConnection((err:any, conn:any)=>{
 
         if(err) throw("Error al conectarse a la base de datos.");
 
-        conn.query("select * from juguetes", (err:any, rows:any)=>{
+        conn.query("select * from productos", (err:any, rows:any)=>{
 
             if(err) throw("Error en consulta de base de datos.");
 
@@ -361,148 +355,137 @@ app.get('/listarJuguetesBD', verificar_jwt, (request:any, response:any)=>{
 
 //#region AGREGAR
 
-app.post("/agregarJugueteBD", upload.single("foto"), verificar_jwt, (request: any, response: any) => {
-    let obj_respuesta = {
-      exito: false,
-      mensaje: "No se pudo agregar el juguete",
-      status: 418,
-    };
-  
+app.post('/productos_bd', agregar, upload.single("foto"), (request:any, response:any)=>{
+   
     let file = request.file;
     let extension = mime.extension(file.mimetype);
-    let juguete_json = JSON.parse(request.body.juguete_json);
-    let path: string = file.destination + juguete_json.marca + "." + extension;
-  
+    let obj = JSON.parse(request.body.obj);
+    let path : string = file.destination + obj.codigo + "." + extension;
+
     fs.renameSync(file.path, path);
-  
-    juguete_json.path_foto = path.split("public/")[1];
-  
-    request.getConnection((err: any, conn: any) => {
-      if (err) throw "Error al conectarse a la base de datos.";
-  
-      conn.query("INSERT INTO juguetes set ?", [juguete_json], (err: any, rows: any) => {
-        if (err) {
-          console.log(err);
-          throw "Error en consulta de base de datos.";
-        }
-  
-        obj_respuesta.exito = true;
-        obj_respuesta.mensaje = "Juguete agregado!";
-        obj_respuesta.status = 200;
-  
-        response.status(obj_respuesta.status).json(obj_respuesta);
-      });
+
+    obj.path = path.split("public/")[1];
+
+    request.getConnection((err:any, conn:any)=>{
+
+        if(err) throw("Error al conectarse a la base de datos.");
+
+        conn.query("insert into productos set ?", [obj], (err:any, rows:any)=>{
+
+            if(err) {console.log(err); throw("Error en consulta de base de datos.");}
+
+            response.json({
+                exito : true,
+                mensaje : "Producto agregado a la bd.",
+            });
+        });
     });
-  }); 
+});
 
 //#endregion
 
 //#region MODIFICAR
 
-app.post("/toys", upload.single("foto"), verificar_jwt, (request: any, response: any) => {
-    let obj_respuesta = {
-      exito: false,
-      mensaje: "No se pudo modificar el juguete",
-      status: 418,
-    };
-  
+app.put('/productos_bd', modificar_eliminar, upload.single("foto"), (request:any, response:any)=>{
+    
     let file = request.file;
     let extension = mime.extension(file.mimetype);
-    let juguete = JSON.parse(request.body.juguete);
-    let path: string = file.destination + juguete.marca + "_modificacion" + "." + extension;
-  
+    let obj = JSON.parse(request.body.obj);
+    let path : string = file.destination + obj.codigo + "." + extension;
+
     fs.renameSync(file.path, path);
-  
-    juguete.path_foto = path.split("public/")[1];
-  
-    let jueguete_modif: any = {};
-    //para excluir la pk (id)
-    jueguete_modif.marca = juguete.marca;
-    jueguete_modif.precio = juguete.precio;
-    jueguete_modif.path_foto = juguete.path_foto;
-  
-    request.getConnection((err: any, conn: any) => {
-      if (err) throw "Error al conectarse a la base de datos.";
-  
-      conn.query("UPDATE juguetes set ?  WHERE id = ?", [jueguete_modif, juguete.id_juguete], (err: any, rows: any) => {
-        if (err) {
-          console.log(err);
-          throw "Error en consulta de base de datos.";
-        }
-  
-        if (rows.affectedRows == 0) {
-          response.status(obj_respuesta.status).json(obj_respuesta);
-        } else {
-          obj_respuesta.exito = true;
-          obj_respuesta.mensaje = "Juguete modificado!";
-          obj_respuesta.status = 200;
-          response.status(obj_respuesta.status).json(obj_respuesta);
-        }
-      });
+
+    obj.path = path.split("public/")[1];
+
+    let obj_modif : any = {};
+    //para excluir la pk (codigo)
+    obj_modif.marca = obj.marca;
+    obj_modif.precio = obj.precio;
+    obj_modif.path = obj.path;
+
+    request.getConnection((err:any, conn:any)=>{
+
+        if(err) throw("Error al conectarse a la base de datos.");
+
+        conn.query("update productos set ? where codigo = ?", [obj_modif, obj.codigo], (err:any, rows:any)=>{
+
+            if(err) {console.log(err); throw("Error en consulta de base de datos.");}
+            
+            //console.log(rows);
+            let hay_registro = rows.affectedRows == 0 ? false : true;
+
+            if( ! hay_registro)
+            {
+                borrarFoto("public/"+obj.path);
+            }
+
+            response.json({
+                exito : hay_registro,
+                mensaje : hay_registro ? "Producto modificado en la bd." : "Producto NO modificado en la bd.",
+            });
+        });
     });
-  });
+});
 
 //#endregion
 
 //#region ELIMINAR
 
-app.delete("/toys", verificar_jwt, (request: any, response: any) => {
-    let obj_respuesta = {
-      exito: false,
-      mensaje: "No se pudo eliminar el juguete",
-      status: 418,
-      
-    };
-  
-    let id = request.body.id_juguete;
-    let obj: any = {};
-    obj.id = id;
-  
-    let path_foto: string = "public/";
-  
-    request.getConnection((err: any, conn: any) => {
-      if (err) throw "Error al conectarse a la base de datos.";
-  
-      // obtengo el path de la foto del usuario a ser eliminado
-      conn.query("SELECT path_foto FROM juguetes WHERE id = ?", [obj.id], (err: any, result: any) => {
-        if (err) throw "Error en consulta de base de datos.";
-  
-        if (result.length != 0) {
-          //console.log(result[0].foto);
-          path_foto += result[0].path_foto;
-        }
-      });
+app.delete('/productos_bd', modificar_eliminar, (request:any, response:any)=>{
+   
+    let obj = request.body;
+    let path_foto : string = "public/";
+    let hay_registro = false;
+
+    request.getConnection((err:any, conn:any)=>{
+
+        if(err) throw("Error al conectarse a la base de datos.");
+
+        //obtengo el path de la foto del producto a ser eliminado
+        conn.query("select path from productos where codigo = ?", [obj.codigo], (err:any, result:any)=>{
+
+            if(err) throw("Error en consulta de base de datos.");
+            
+            //console.log(result.length);
+            if(result.length > 0)
+            {
+                path_foto += result[0].path;
+                hay_registro = true;
+            }
+
+            if(hay_registro)
+            {
+                request.getConnection((err:any, conn:any)=>{
+
+                    if(err) throw("Error al conectarse a la base de datos.");
+
+                    conn.query("delete from productos where codigo = ?", [obj.codigo], (err:any, rows:any)=>{
+
+                        if(err) {console.log(err); throw("Error en consulta de base de datos.");}
+
+
+                        borrarFoto(path_foto);
+
+                        response.json({
+                            exito : true,
+                            mensaje : "Producto eliminado de la bd.",
+                        });
+                    });
+                });
+            }
+            else
+            {
+                response.json({
+                    exito : false,
+                    mensaje : "Producto NO eliminado de la bd.",
+                });
+            }
+        });
     });
-  
-    request.getConnection((err: any, conn: any) => {
-      if (err) throw "Error al conectarse a la base de datos.";
-  
-      conn.query("DELETE FROM juguetes WHERE id = ?", [obj.id], (err: any, rows: any) => {
-        if (err) {
-          console.log(err);
-          throw "Error en consulta de base de datos.";
-        }
-  
-        if (fs.existsSync(path_foto) && path_foto != "public/") {
-          fs.unlink(path_foto, (err: any) => {
-            if (err) throw err;
-            console.log(path_foto + " fue borrado.");
-          });
-        }
-  
-        if (rows.affectedRows == 0) {
-          response.status(obj_respuesta.status).json(obj_respuesta);
-        } else {
-          obj_respuesta.exito = true;
-          obj_respuesta.mensaje = "Juguete Eliminado!";
-          obj_respuesta.status = 200;
-          response.status(obj_respuesta.status).json(obj_respuesta);
-        }
-      });
-    });
-  });
-  
+});
+
 //#endregion
+
 
 //#region FUNCIONES
 
@@ -527,6 +510,7 @@ function borrarFoto(path_foto:string) : boolean {
 }
 
 //#endregion
+
 
 app.listen(app.get('puerto'), ()=>{
     console.log('Servidor corriendo sobre puerto:', app.get('puerto'));

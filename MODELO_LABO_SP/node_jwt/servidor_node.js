@@ -1,7 +1,7 @@
 "use strict";
 const express = require('express');
 const app = express();
-app.set('puerto', 2022);
+app.set('puerto', 9876);
 app.get('/', (request, response) => {
     response.send('GET - servidor NodeJS - jwt');
 });
@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: false }));
 const multer = require('multer');
 const mime = require('mime-types');
 const storage = multer.diskStorage({
-    destination: "public/juguetes/fotos/",
+    destination: "public/fotos/",
 });
 const upload = multer({
     storage: storage
@@ -28,14 +28,14 @@ const db_options = {
     port: 3306,
     user: 'root',
     password: '',
-    database: 'jugueteria_bd'
+    database: 'productos_usuarios_node'
 };
 app.use(myconn(mysql, db_options, 'single'));
 const verificar_jwt = express.Router();
 verificar_jwt.use((request, response, next) => {
     let token = request.headers["authorization"];
     if (!token) {
-        response.status(403).send({
+        response.status(401).send({
             error: "El JWT es requerido!!!"
         });
         return;
@@ -58,20 +58,45 @@ verificar_jwt.use((request, response, next) => {
         });
     }
     else {
-        response.status(403).send({
+        response.status(401).send({
             error: "El JWT está vacío!!!"
         });
     }
 });
-const solo_propietario = express.Router();
-solo_propietario.use(verificar_jwt, (request, response, next) => {
+const solo_admin = express.Router();
+solo_admin.use(verificar_jwt, (request, response, next) => {
     let usuario = response.jwt;
-    if (usuario.perfil == "propietario") {
+    if (usuario.perfil == "administrador") {
         next();
     }
     else {
         return response.json({
-            mensaje: "NO tiene perfil de 'PROPIETARIO'"
+            mensaje: "NO tiene perfil de 'ADMINISTRADOR'"
+        });
+    }
+});
+app.post("/crear_token", (request, response) => {
+    let obj_user = request.body;
+    if ((obj_user.usuario == "admin" || obj_user.usuario == "user") && obj_user.clave == "123456") {
+        const payload = {
+            usuario: obj_user.usuario,
+            perfil: obj_user.usuario == "admin" ? "administrador" : "usuario",
+            fecha: new Date(2023, 9, 12, 14, 17, 0),
+        };
+        const token = jwt.sign(payload, app.get("key_jwt"), {
+            expiresIn: "1m"
+        });
+        response.json({
+            exito: true,
+            mensaje: "JWT creado",
+            jwt: token
+        });
+    }
+    else {
+        response.json({
+            exito: false,
+            mensaje: "Usuario no registrado!!!",
+            jwt: null
         });
     }
 });
@@ -79,8 +104,8 @@ app.get('/verificar_token', verificar_jwt, (request, response) => {
     console.log("En el verbo GET/verificar_token");
     response.json({ exito: true, jwt: response.jwt });
 });
-app.get('/propietario', solo_propietario, (request, response) => {
-    console.log("En el verbo GET/propietario");
+app.get('/admin', solo_admin, (request, response) => {
+    console.log("En el verbo GET/admin");
     response.json(response.jwt);
 });
 const verificar_usuario = express.Router();
@@ -89,7 +114,7 @@ verificar_usuario.use((request, response, next) => {
     request.getConnection((err, conn) => {
         if (err)
             throw ("Error al conectarse a la base de datos.");
-        conn.query("select * from usuarios where correo = ? and clave = ? ", [obj.correo, obj.clave], (err, rows) => {
+        conn.query("select * from usuarios where legajo = ? and apellido = ? ", [obj.legajo, obj.apellido], (err, rows) => {
             if (err)
                 throw ("Error en consulta de base de datos.");
             if (rows.length == 1) {
@@ -99,56 +124,34 @@ verificar_usuario.use((request, response, next) => {
             else {
                 response.status(200).json({
                     exito: false,
-                    mensaje: "clave y/o correo incorrectos.",
+                    mensaje: "Apellido y/o Legajo incorrectos.",
                     jwt: null
                 });
             }
         });
     });
 });
-const modificar_eliminar = express.Router();
-modificar_eliminar.use(verificar_jwt, (request, response, next) => {
-    console.log("middleware modificar");
+const agregar = express.Router();
+agregar.use(verificar_jwt, (request, response, next) => {
     let obj = response.jwt;
-    if (obj.usuario.perfil == "propietario" || obj.usuario.perfil == "supervisor") {
+    if (obj.usuario.Rol == "administrador") {
         next();
     }
     else {
         return response.status(401).json({
-            mensaje: "NO tiene el perfil necesario para realizar la acción.",
+            mensaje: "NO tiene el rol necesario para realizar la acción."
         });
     }
 });
-app.get("/login", verificar_jwt, (request, response) => {
-    response.json({ exito: true, payload: response.jwt });
-    let obj_respuesta = {
-        exito: false,
-        mensaje: "El JWT es requerido!!!",
-        payload: null,
-        status: 403,
-    };
-    let token = request.headers["x-access-token"] || request.headers["authorization"];
-    if (!token) {
-        response.status(obj_respuesta.status).json({
-            obj_respuesta,
-        });
+const modificar_eliminar = express.Router();
+modificar_eliminar.use(verificar_jwt, (request, response, next) => {
+    let obj = response.jwt.usuario;
+    if (obj.Rol == "administrador" || obj.Rol == "supervisor") {
+        next();
     }
-    if (token.startsWith("Bearer ")) {
-        token = token.slice(7, token.length);
-    }
-    if (token) {
-        jwt.verify(token, app.get("key"), (error, decoded) => {
-            if (error) {
-                obj_respuesta.mensaje = "El JWT NO es válido!!!";
-                response.status(obj_respuesta.status).json(obj_respuesta);
-            }
-            else {
-                obj_respuesta.exito = true;
-                obj_respuesta.mensaje = "El JWT es valido";
-                obj_respuesta.payload = decoded;
-                obj_respuesta.status = 200;
-                response.status(obj_respuesta.status).json(obj_respuesta);
-            }
+    else {
+        return response.status(401).json({
+            mensaje: "NO tiene el rol necesario para realizar la acción."
         });
     }
 });
@@ -157,20 +160,15 @@ app.post("/login", verificar_usuario, (request, response, obj) => {
     const payload = {
         usuario: {
             Id: user.id,
-            Correo: user.correo,
-            Nombre: user.nombre,
             Apellido: user.apellido,
-            Foto: user.foto,
-            Perfil: user.perfil
+            Nombre: user.nombre,
+            Rol: user.rol
         },
-        alumno: {
-            Nombre: "Pazos",
-            Apellido: "Nahuel"
-        },
-        parcial: "Segundo Parcial 2022",
+        api: "productos_usuarios API",
+        version: "1.0.1"
     };
     const token = jwt.sign(payload, app.get("key_jwt"), {
-        expiresIn: "2m"
+        expiresIn: "5m"
     });
     response.json({
         exito: true,
@@ -178,135 +176,105 @@ app.post("/login", verificar_usuario, (request, response, obj) => {
         jwt: token
     });
 });
-app.get('/listarUsuariosBD', verificar_jwt, (request, response) => {
+app.get('/productos_bd', verificar_jwt, (request, response) => {
     request.getConnection((err, conn) => {
         if (err)
             throw ("Error al conectarse a la base de datos.");
-        conn.query("select * from usuarios", (err, rows) => {
+        conn.query("select * from productos", (err, rows) => {
             if (err)
                 throw ("Error en consulta de base de datos.");
             response.send(JSON.stringify(rows));
         });
     });
 });
-app.get('/listarJuguetesBD', verificar_jwt, (request, response) => {
+app.post('/productos_bd', agregar, upload.single("foto"), (request, response) => {
+    let file = request.file;
+    let extension = mime.extension(file.mimetype);
+    let obj = JSON.parse(request.body.obj);
+    let path = file.destination + obj.codigo + "." + extension;
+    fs.renameSync(file.path, path);
+    obj.path = path.split("public/")[1];
     request.getConnection((err, conn) => {
         if (err)
             throw ("Error al conectarse a la base de datos.");
-        conn.query("select * from juguetes", (err, rows) => {
-            if (err)
+        conn.query("insert into productos set ?", [obj], (err, rows) => {
+            if (err) {
+                console.log(err);
                 throw ("Error en consulta de base de datos.");
-            response.send(JSON.stringify(rows));
+            }
+            response.json({
+                exito: true,
+                mensaje: "Producto agregado a la bd.",
+            });
         });
     });
 });
-app.post("/agregarJugueteBD", upload.single("foto"), verificar_jwt, (request, response) => {
-    let obj_respuesta = {
-        exito: false,
-        mensaje: "No se pudo agregar el juguete",
-        status: 418,
-    };
+app.put('/productos_bd', modificar_eliminar, upload.single("foto"), (request, response) => {
     let file = request.file;
     let extension = mime.extension(file.mimetype);
-    let juguete_json = JSON.parse(request.body.juguete_json);
-    let path = file.destination + juguete_json.marca + "." + extension;
+    let obj = JSON.parse(request.body.obj);
+    let path = file.destination + obj.codigo + "." + extension;
     fs.renameSync(file.path, path);
-    juguete_json.path_foto = path.split("public/")[1];
+    obj.path = path.split("public/")[1];
+    let obj_modif = {};
+    obj_modif.marca = obj.marca;
+    obj_modif.precio = obj.precio;
+    obj_modif.path = obj.path;
     request.getConnection((err, conn) => {
         if (err)
-            throw "Error al conectarse a la base de datos.";
-        conn.query("INSERT INTO juguetes set ?", [juguete_json], (err, rows) => {
+            throw ("Error al conectarse a la base de datos.");
+        conn.query("update productos set ? where codigo = ?", [obj_modif, obj.codigo], (err, rows) => {
             if (err) {
                 console.log(err);
-                throw "Error en consulta de base de datos.";
+                throw ("Error en consulta de base de datos.");
             }
-            obj_respuesta.exito = true;
-            obj_respuesta.mensaje = "Juguete agregado!";
-            obj_respuesta.status = 200;
-            response.status(obj_respuesta.status).json(obj_respuesta);
+            let hay_registro = rows.affectedRows == 0 ? false : true;
+            if (!hay_registro) {
+                borrarFoto("public/" + obj.path);
+            }
+            response.json({
+                exito: hay_registro,
+                mensaje: hay_registro ? "Producto modificado en la bd." : "Producto NO modificado en la bd.",
+            });
         });
     });
 });
-app.post("/toys", upload.single("foto"), verificar_jwt, (request, response) => {
-    let obj_respuesta = {
-        exito: false,
-        mensaje: "No se pudo modificar el juguete",
-        status: 418,
-    };
-    let file = request.file;
-    let extension = mime.extension(file.mimetype);
-    let juguete = JSON.parse(request.body.juguete);
-    let path = file.destination + juguete.marca + "_modificacion" + "." + extension;
-    fs.renameSync(file.path, path);
-    juguete.path_foto = path.split("public/")[1];
-    let jueguete_modif = {};
-    jueguete_modif.marca = juguete.marca;
-    jueguete_modif.precio = juguete.precio;
-    jueguete_modif.path_foto = juguete.path_foto;
-    request.getConnection((err, conn) => {
-        if (err)
-            throw "Error al conectarse a la base de datos.";
-        conn.query("UPDATE juguetes set ?  WHERE id = ?", [jueguete_modif, juguete.id_juguete], (err, rows) => {
-            if (err) {
-                console.log(err);
-                throw "Error en consulta de base de datos.";
-            }
-            if (rows.affectedRows == 0) {
-                response.status(obj_respuesta.status).json(obj_respuesta);
-            }
-            else {
-                obj_respuesta.exito = true;
-                obj_respuesta.mensaje = "Juguete modificado!";
-                obj_respuesta.status = 200;
-                response.status(obj_respuesta.status).json(obj_respuesta);
-            }
-        });
-    });
-});
-app.delete("/toys", verificar_jwt, (request, response) => {
-    let obj_respuesta = {
-        exito: false,
-        mensaje: "No se pudo eliminar el juguete",
-        status: 418,
-    };
-    let id = request.body.id_juguete;
-    let obj = {};
-    obj.id = id;
+app.delete('/productos_bd', modificar_eliminar, (request, response) => {
+    let obj = request.body;
     let path_foto = "public/";
+    let hay_registro = false;
     request.getConnection((err, conn) => {
         if (err)
-            throw "Error al conectarse a la base de datos.";
-        conn.query("SELECT path_foto FROM juguetes WHERE id = ?", [obj.id], (err, result) => {
+            throw ("Error al conectarse a la base de datos.");
+        conn.query("select path from productos where codigo = ?", [obj.codigo], (err, result) => {
             if (err)
-                throw "Error en consulta de base de datos.";
-            if (result.length != 0) {
-                path_foto += result[0].path_foto;
+                throw ("Error en consulta de base de datos.");
+            if (result.length > 0) {
+                path_foto += result[0].path;
+                hay_registro = true;
             }
-        });
-    });
-    request.getConnection((err, conn) => {
-        if (err)
-            throw "Error al conectarse a la base de datos.";
-        conn.query("DELETE FROM juguetes WHERE id = ?", [obj.id], (err, rows) => {
-            if (err) {
-                console.log(err);
-                throw "Error en consulta de base de datos.";
-            }
-            if (fs.existsSync(path_foto) && path_foto != "public/") {
-                fs.unlink(path_foto, (err) => {
+            if (hay_registro) {
+                request.getConnection((err, conn) => {
                     if (err)
-                        throw err;
-                    console.log(path_foto + " fue borrado.");
+                        throw ("Error al conectarse a la base de datos.");
+                    conn.query("delete from productos where codigo = ?", [obj.codigo], (err, rows) => {
+                        if (err) {
+                            console.log(err);
+                            throw ("Error en consulta de base de datos.");
+                        }
+                        borrarFoto(path_foto);
+                        response.json({
+                            exito: true,
+                            mensaje: "Producto eliminado de la bd.",
+                        });
+                    });
                 });
             }
-            if (rows.affectedRows == 0) {
-                response.status(obj_respuesta.status).json(obj_respuesta);
-            }
             else {
-                obj_respuesta.exito = true;
-                obj_respuesta.mensaje = "Juguete Eliminado!";
-                obj_respuesta.status = 200;
-                response.status(obj_respuesta.status).json(obj_respuesta);
+                response.json({
+                    exito: false,
+                    mensaje: "Producto NO eliminado de la bd.",
+                });
             }
         });
     });

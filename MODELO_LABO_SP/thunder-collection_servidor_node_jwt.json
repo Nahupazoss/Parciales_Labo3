@@ -1,0 +1,216 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "servidor_node_jwt",
+    "dateExported": "2023-11-16T20:41:32.268Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "99f0ec31-afe6-4810-9215-67cb1ec5f1d3",
+            "colId": "27ed9390-96e8-448f-b98e-20086e9fdc2f",
+            "containerId": "",
+            "name": "test-api",
+            "url": "http://localhost:9876",
+            "method": "GET",
+            "sortNum": 5000,
+            "created": "2023-11-14T16:08:04.553Z",
+            "modified": "2023-11-14T16:08:47.945Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "da9ce252-0422-4b26-8a24-4d6acf89e0c4",
+            "colId": "27ed9390-96e8-448f-b98e-20086e9fdc2f",
+            "containerId": "",
+            "name": "01-crear jwt",
+            "url": "http://localhost:9876/crear_token",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-06-15T16:11:39.037Z",
+            "modified": "2023-11-14T18:57:59.358Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"usuario\" : \"admin\",\n    \"clave\" : \"123456\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "9f1a7ca2-f83b-4206-b5a3-19a748b2cce4",
+            "colId": "27ed9390-96e8-448f-b98e-20086e9fdc2f",
+            "containerId": "",
+            "name": "02-verificar jwt",
+            "url": "http://localhost:9876/verificar_token",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2023-06-15T16:11:39.039Z",
+            "modified": "2023-11-16T16:01:49.900Z",
+            "headers": [],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjp7IklkIjoxLCJBcGVsbGlkbyI6IlDDqXJleiIsIk5vbWJyZSI6IkVuem8iLCJSb2wiOiJhZG1pbmlzdHJhZG9yIn0sImFwaSI6InByb2R1Y3Rvc191c3VhcmlvcyBBUEkiLCJ2ZXJzaW9uIjoiMS4wLjEiLCJpYXQiOjE3MDAxNTA0OTcsImV4cCI6MTcwMDE1MDc5N30.nc-St8WxX6J7YpJMmS1WY1aAgX0sff6HFQq6FgUuAT8"
+            },
+            "tests": []
+        },
+        {
+            "_id": "6fc29be6-db52-43b2-9aa5-f94bd9b973d4",
+            "colId": "27ed9390-96e8-448f-b98e-20086e9fdc2f",
+            "containerId": "",
+            "name": "03-solo admin",
+            "url": "http://localhost:9876/admin",
+            "method": "GET",
+            "sortNum": 35000,
+            "created": "2023-06-15T16:11:39.040Z",
+            "modified": "2023-11-14T18:58:17.962Z",
+            "headers": [],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoiYWRtaW4iLCJwZXJmaWwiOiJhZG1pbmlzdHJhZG9yIiwiZmVjaGEiOiIyMDIzLTEwLTEyVDE3OjE3OjAwLjAwMFoiLCJpYXQiOjE2OTk5ODgyNzksImV4cCI6MTcwMDA3NDY3OX0.vwQMkiFHxqWztNrYs6Wn9pfRcgnngE6DVfjgR931aEc"
+            },
+            "tests": []
+        },
+        {
+            "_id": "6e079e62-aad7-42ef-90cc-52ce36d1f26f",
+            "colId": "27ed9390-96e8-448f-b98e-20086e9fdc2f",
+            "containerId": "",
+            "name": "04-login",
+            "url": "http://localhost:9876/login",
+            "method": "POST",
+            "sortNum": 37500,
+            "created": "2023-11-14T20:48:50.582Z",
+            "modified": "2023-11-14T20:48:50.582Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"legajo\" : 111,\n    \"apellido\" : \"Pérez\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "374d0e54-5a7a-4164-98c9-6e9b46e36014",
+            "colId": "27ed9390-96e8-448f-b98e-20086e9fdc2f",
+            "containerId": "",
+            "name": "05.- Get - listado bd - jwt",
+            "url": "http://localhost:9876/productos_bd",
+            "method": "GET",
+            "sortNum": 50000,
+            "created": "2023-06-15T16:11:39.042Z",
+            "modified": "2023-11-14T20:23:22.708Z",
+            "headers": [],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjp7IklkIjoxLCJBcGVsbGlkbyI6IlDDqXJleiIsIk5vbWJyZSI6IkVuem8iLCJSb2wiOiJhZG1pbmlzdHJhZG9yIn0sImFwaSI6InByb2R1Y3Rvc191c3VhcmlvcyIsInZlcnNpb24iOiIxLjAuMSIsImlhdCI6MTY5OTk5MzM5MCwiZXhwIjoxNjk5OTkzNjkwfQ.5VO5K-z1bVKkDV6fvZvNRBCkcLVGpNKy55HwbIsaQIY"
+            },
+            "tests": []
+        },
+        {
+            "_id": "bf2bff9c-834c-4961-80e2-159baf4b6d99",
+            "colId": "27ed9390-96e8-448f-b98e-20086e9fdc2f",
+            "containerId": "",
+            "name": "06.- Post - Alta bd - jwt",
+            "url": "http://localhost:9876/productos_bd",
+            "method": "POST",
+            "sortNum": 60000,
+            "created": "2023-06-15T16:11:39.043Z",
+            "modified": "2023-11-16T20:40:16.530Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "obj",
+                        "value": "{ \"codigo\": 1, \"marca\": \"marca_uno_con_foto\", \"precio\": 100 }"
+                    },
+                    {
+                        "name": "obj",
+                        "value": "{ \"codigo\": 2, \"marca\": \"marca_dos_con_foto\", \"precio\": 200}",
+                        "isDisabled": true
+                    }
+                ],
+                "files": [
+                    {
+                        "name": "foto",
+                        "value": "c:\\Users\\DIYE\\Pictures\\avion.jpg"
+                    },
+                    {
+                        "name": "foto",
+                        "value": "c:\\Users\\DIYE\\Pictures\\flor.jpg",
+                        "isDisabled": true
+                    }
+                ]
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjp7IklkIjoxLCJBcGVsbGlkbyI6IlDDqXJleiIsIk5vbWJyZSI6IkVuem8iLCJSb2wiOiJhZG1pbmlzdHJhZG9yIn0sImFwaSI6InByb2R1Y3Rvc191c3VhcmlvcyIsInZlcnNpb24iOiIxLjAuMSIsImlhdCI6MTY5OTk5MTEyMSwiZXhwIjoxNjk5OTkxNDIxfQ.DT4ugsTt5QigPZjQ7rWHvH-a9Vx3-EKqtZELDf5uiAU"
+            },
+            "tests": []
+        },
+        {
+            "_id": "fdce9477-6850-4e35-a686-d740d2488527",
+            "colId": "27ed9390-96e8-448f-b98e-20086e9fdc2f",
+            "containerId": "",
+            "name": "07.- Put - Modificar bd - jwt",
+            "url": "http://localhost:9876/productos_bd",
+            "method": "PUT",
+            "sortNum": 70000,
+            "created": "2023-06-15T16:11:39.044Z",
+            "modified": "2023-11-16T20:41:11.009Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "obj",
+                        "value": "{ \"codigo\": 2, \"marca\": \"marca_dos_con_foto_modificada\", \"precio\": 222 }"
+                    }
+                ],
+                "files": [
+                    {
+                        "name": "foto",
+                        "value": "c:\\Users\\DIYE\\Pictures\\caracol.jpg"
+                    }
+                ]
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjp7IklkIjoxLCJBcGVsbGlkbyI6IlDDqXJleiIsIk5vbWJyZSI6IkVuem8iLCJSb2wiOiJhZG1pbmlzdHJhZG9yIn0sImFwaSI6InByb2R1Y3Rvc191c3VhcmlvcyIsInZlcnNpb24iOiIxLjAuMSIsImlhdCI6MTY5OTk5MTUzNywiZXhwIjoxNjk5OTkxODM3fQ.QlQS-7PIThLCG9twu1ny9IehUlLcmoCJZkArqz6wyi0"
+            },
+            "tests": []
+        },
+        {
+            "_id": "f833562a-f989-485f-bfb6-3d34ecd28dce",
+            "colId": "27ed9390-96e8-448f-b98e-20086e9fdc2f",
+            "containerId": "",
+            "name": "08.- Delete - Eliminar bd - jwt",
+            "url": "http://localhost:9876/productos_bd",
+            "method": "DELETE",
+            "sortNum": 80000,
+            "created": "2023-06-15T16:11:39.045Z",
+            "modified": "2023-11-16T20:41:17.033Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\"codigo\": 2}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjp7IklkIjoxLCJBcGVsbGlkbyI6IlDDqXJleiIsIk5vbWJyZSI6IkVuem8iLCJSb2wiOiJhZG1pbmlzdHJhZG9yIn0sImFwaSI6InByb2R1Y3Rvc191c3VhcmlvcyIsInZlcnNpb24iOiIxLjAuMSIsImlhdCI6MTY5OTk5MTUzNywiZXhwIjoxNjk5OTkxODM3fQ.QlQS-7PIThLCG9twu1ny9IehUlLcmoCJZkArqz6wyi0"
+            },
+            "tests": []
+        }
+    ]
+}
